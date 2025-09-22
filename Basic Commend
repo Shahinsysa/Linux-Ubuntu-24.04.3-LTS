@@ -1,0 +1,117 @@
+ubuntu 24.04 TLS uses Netplan for network configuration.
+Identify Network Interface: Open a terminal and run ip a or ip link to identify the name of your network interface (e.g., enp0s3, eth0).
+Edit Netplan Configuration File: Netplan configuration files are typically located in /etc/netplan/. 
+The file might be named 50-cloud-init.yaml or 01-netcfg.yaml. Open it with a text editor like nano or vi:
+
+Default
+#network:
+#     version: 2
+#      ethernets:
+#        eth0: 
+#          dhcp4: true
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: no
+      addresses: [10.160.5.16/24]
+      routes:
+        - to: default
+          via: 10.160.5.1
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+=======================================================
+# Step by step sshd configuration on Ubuntu 24.04.3 LTS
+
+Note-
+To change the SSH daemon (sshd) port on Ubuntu 24.04.3 LTS, you need to follow specific steps due to the shift to socket-based activation introduced in Ubuntu 22.10 and later. This means modifying only /etc/ssh/sshd_config is insufficient, as the socket configuration controls the listening port. Below is a step-by-step guide based on the search results:
+
+1. Modify the SSH Daemon Configuration
+Edit the SSH configuration file to set the new port
+
+#sudo nano /etc/ssh/sshd_config
+Port 2222
+
+Note - Save the file. Note: This change alone will not work on Ubuntu 24.04 without socket configuration adjustments, but it is still required for the daemon itself when activated
+
+2. Adjust the Socket Configuration
+Ubuntu uses ssh.socket for socket-based activation, which overrides the port setting in sshd_config. You have two options:
+
+Option A: Edit the Socket Unit File Directly
+-	Open the socket unit file:
+#sudo nano /lib/systemd/system/ssh.socket
+
+Change the ListenStream line to the new port
+ListenStream=2222
+
+Save the file
+
+Option B: Create an Override File (Recommended)
+
+Create a drop-in directory and override file:
+#sudo mkdir -p /etc/systemd/system/ssh.socket.d/
+#sudo nano /etc/systemd/system/ssh.socket.d/override.conf
+
+Add the following content to replace the default port (blank ListenStream clears the default port 22):
+
+[Socket]
+ListenStream=
+ListenStream=2222
+
+Save the file. This method ensures the original unit file remains unchanged and is easier to manage
+
+3. Reload SystemD and Restart Services
+
+Reload the systemd daemon to apply changes:
+
+#sudo systemctl daemon-reload
+
+Restart the socket and service:
+
+sudo systemctl restart ssh.socket
+sudo systemctl restart ssh.service
+
+Note: Some search results suggest that systemctl daemon-reload alone might suffice if using the override method, but restarting the socket is recommended
+
+4. Verify the New Port
+Check if SSH is listening on the new port:
+
+#sudo ss -tulpn | grep ssh
+
+Alternatively, check the socket status:
+
+#sudo systemctl status ssh.socket
+
+Ensure the output shows the new port
+
+5. Update Firewall Rules
+
+Allow the new port in UFW (if enabled):
+
+#sudo ufw allow 2222/tcp
+
+Remove the old port rule if no longer needed:
+#sudo ufw delete allow 22/tcp
+
+For iptables, add a rule and save it:
+#sudo iptables -A INPUT -p tcp --dport 2222 -j ACCEPT
+#sudo iptables-save > /etc/iptables/rules.v4
+
+Critical: Do this before disconnecting your current SSH session to avoid lockout
+
+6. Test the Connection
+
+# ssh user@server_ip -p 2222
+
+If successful, you can disable the old port in the firewall.
+
+7. Troubleshooting Tips
+
+#sudo systemctl disable --now ssh.socket
+#sudo systemctl enable --now ssh.service
+
+After this, changes to sshd_config will take effect without socket modifications .
+
+Check for any configuration files in /etc/ssh/sshd_config.d/ that might override port settings
