@@ -23,7 +23,15 @@ network:
         addresses: [8.8.8.8, 8.8.4.4]
 
 =======================================================
+User proifle issue
+#useradd <User name>
+# passwd <User name>  and then enter and type your password
+# usermod -aG <GroupName> <UserName>
 
+To change user bash shell 
+# chsh -s <Type Bash URL or Name-/usr/bin/bash> <username>
+
+=======================================================
 # Step by step sshd configuration on Ubuntu 24.04.3 LTS
 
 Note-
@@ -116,3 +124,5 @@ If successful, you can disable the old port in the firewall.
 After this, changes to sshd_config will take effect without socket modifications .
 
 Check for any configuration files in /etc/ssh/sshd_config.d/ that might override port settings
+
+=========================================================
