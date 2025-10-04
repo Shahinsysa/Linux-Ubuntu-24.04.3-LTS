@@ -22,7 +22,7 @@ network:
       nameservers:
         addresses: [8.8.8.8, 8.8.4.4]
 :wq  for exit and 
-#netplan apply 
+# netplan apply 
 =======================================================
 User proifle issue
 #useradd <User name>
