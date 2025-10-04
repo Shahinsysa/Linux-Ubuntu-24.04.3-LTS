@@ -21,7 +21,8 @@ network:
           via: 10.160.5.1
       nameservers:
         addresses: [8.8.8.8, 8.8.4.4]
-
+:wq  for exit and 
+#netplan apply 
 =======================================================
 User proifle issue
 #useradd <User name>
