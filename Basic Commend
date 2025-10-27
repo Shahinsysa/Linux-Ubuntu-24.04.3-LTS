@@ -127,3 +127,15 @@ After this, changes to sshd_config will take effect without socket modifications
 Check for any configuration files in /etc/ssh/sshd_config.d/ that might override port settings
 
 =========================================================
+How to Reset Forgotten Root Password in CentOS 8 Or Any Linux
+
+-First, reboot or power on your CentOS 8 system. Select the kernel you want to boot into. Next, press ‘e’ on the keyboard to interrupt the boot process and make changes.
+-On the next screen, locate the ro (read-only) kernel parameter as highlighted below.
+-Replace the kernel parameter ro with rw and append an extra kernel parameter init=/sysroot/bin/sh. In a nutshell, simply replace the kernel parameter ro with "rw init=/sysroot/bin/sh".
+-Once done with making the changes, hit Ctrl + X combination on the keyboard to enter single-user mode.
+-Next, run the command below to mount the root file system in read and write mode.
+-You can now change the root password by executing the command:
+-Provide a new root password and confirm it. For best practice select a password with a combination of uppercase, lowercase, numerical and special characters to boost password strength.
+-Next, run the command below to enable SELinux relabelling.
+-To apply the changes, exit and reboot the CentOS 8 system.
+=========================================================
