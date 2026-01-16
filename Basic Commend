@@ -23,6 +23,18 @@ network:
         addresses: [8.8.8.8, 8.8.4.4]
 :wq  for exit and 
 # netplan apply 
+Network Interface status check 
+
+# networkctl list
+# networkctl status
+# ip link show eth0
+# ip addr show
+# sudo ip link set [interface_name] down
+# sudo ip link set [interface_name] up
+# sudo netplan apply
+
+Verifying Connectivity
+# ping 8.8.8.8 -c 4
 =======================================================
 User proifle issue
 #useradd <User name>
